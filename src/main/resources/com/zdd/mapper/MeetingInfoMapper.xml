@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zdd.entry.mapper.MeetingInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.zdd.entry.domain.MeetingInfo">
+            <id property="meetingId" column="meeting_id" />
+            <result property="meetingNo" column="meeting_no" />
+            <result property="meetingName" column="meeting_name" />
+            <result property="createTime" column="create_time" />
+            <result property="createUserId" column="create_user_id" />
+            <result property="joinType" column="join_type" />
+            <result property="joinPassword" column="join_password" />
+            <result property="startTime" column="start_time" />
+            <result property="endTime" column="end_time" />
+            <result property="status" column="status" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        meeting_id,meeting_no,meeting_name,create_time,create_user_id,join_type,
+        join_password,start_time,end_time,status
+    </sql>
+</mapper>

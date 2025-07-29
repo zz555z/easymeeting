@@ -1,0 +1,118 @@
+
+# 服务器配置
+server:
+  port: 6060
+  servlet:
+    context-path: /api
+    session:
+      timeout: PT60M  # Session 过期时间 60 分钟
+
+# 文件上传配置
+spring:
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
+  mvc:
+    favicon:
+      enabled: false  # 关闭 favicon 处理
+    throw-exception-if-no-handler-found: true  # 启用未找到处理器的异常
+  web:
+    resources:
+      add-mappings: false  # 禁用默认资源映射
+  shardingsphere:
+    datasource:
+      names: ds0
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/easymetting?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false
+        username: root
+        password: mysql
+    rules:
+      sharding:
+        tables:
+          meeting_chat_message:
+            actual-data-nodes: ds0.meeting_chat_message_$->{1..2}
+            table-strategy:
+              standard:
+                sharding-column: meeting_id
+                sharding-algorithm-name: meeting-id-sharding
+            key-generate-strategy:
+              column: message_id
+              key-generator-name: SHORT_ID
+        sharding-algorithms:
+          meeting-id-sharding:
+            type: CLASS_BASED
+            props:
+              strategy: STANDARD  # 标准分片策
+              algorithmClassName: com.zdd.config.MeetingIdShardingAlgorithm
+        key-generators:
+          SHORT_ID:
+            type: SHORT_ID
+#            props:
+#              algorithmClassName: com.zdd.config.ShortIdKeyGenerator
+  # 数据库配置
+#  datasource:
+#    url: jdbc:mysql://127.0.0.1:3306/easymetting?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false
+#    username: root
+#    password: mysql
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      pool-name: HikariCPDatasource
+#      minimum-idle: 5
+#      idle-timeout: 180000
+#      maximum-pool-size: 10
+#      auto-commit: true
+#      max-lifetime: 1800000
+#      connection-timeout: 30000
+#      connection-test-query: SELECT 1
+
+  # Redis 配置
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    timeout: 2000
+    password: 'redis'
+    jedis:
+      pool:
+        max-active: 20
+        max-wait: -1  # 负值表示无限制
+        max-idle: 10
+        min-idle: 0
+
+# 消息通道配置
+messaging:
+  handle:
+    channel: redis  # 可选 redis 或 rabbitmq
+
+# RabbitMQ 备用配置（若需启用）
+rabbitmq:
+  host: localhost
+  port: 5672
+
+# 项目目录
+project:
+  folder: ${user.dir}
+
+# 日志级别
+log:
+  root:
+    level: info
+
+#mybatis 大小写转驼峰
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.zdd.entry.domain
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 管理员邮箱
+admin:
+  emails: test@qq.com
+  folder: ${user.dir}
+  wsPort: 6061    # netty端口
