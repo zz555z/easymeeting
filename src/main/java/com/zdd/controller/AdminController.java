@@ -37,6 +37,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequestMapping("/admin")
 public class AdminController {
     @Autowired
     private UserInfoService userInfoService;
@@ -219,6 +220,7 @@ public class AdminController {
             log.error("读取文件异常", e);
         }
     }
+
 
 
 }

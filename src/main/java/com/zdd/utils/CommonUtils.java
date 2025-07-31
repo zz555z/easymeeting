@@ -1,5 +1,6 @@
 package com.zdd.utils;
 
+import cn.hutool.crypto.digest.DigestUtil;
 import com.zdd.entry.constants.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,7 +145,8 @@ public class CommonUtils {
 
 
     public static void main(String[] args) {
-        System.out.println(getFileSuffix("1.jpg"));
+        String ss = DigestUtil.md5Hex("Abc123456" + CommonConstant.MD5_SALTING);
+        System.out.println(ss);
 
 
     }

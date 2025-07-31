@@ -19,19 +19,14 @@ import com.zdd.entry.mapper.UserInfoMapper;
 import com.zdd.exception.BusinessException;
 import com.zdd.utils.*;
 import com.zdd.websocket.message.MessageHandler;
-import jdk.nashorn.internal.ir.IfNode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.time.Year;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -68,9 +63,10 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
      *                 <p>
      *                 注意：此方法中的业务异常表明尝试注册一个已存在的用户邮箱
      *                 用户ID和昵称是随机生成的字符串，以确保唯一性
+     * @param nickName
      */
     @Override
-    public void register(String email, String password) {
+    public void register(String email, String password, String nickName) {
         // 检查数据库中是否已存在相同邮箱的用户
         UserInfo dbUserInfo = baseMapper.selectOne(new QueryWrapper<UserInfo>().eq("email", email));
         if (dbUserInfo != null) {
@@ -87,7 +83,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         // 设置用户密码为加密后的字符串
         userInfo.setPassword(DigestUtil.md5Hex(password + CommonConstant.MD5_SALTING));
         // 设置用户昵称为随机生成的字符串
-        userInfo.setNickName(RandomUtils.generateRandomString(CommonConstant.RODMIX_NUMBER));
+        userInfo.setNickName(StringUtils.isEmpty(nickName) ? RandomUtils.generateRandomString(CommonConstant.RODMIX_NUMBER) : nickName);
         userInfo.setStatus(UserStatusEnum.NORMAL.getCode());
         userInfo.setSex(UserSexEnum.UNKNOWN.getCode());
         userInfo.setMettingNo(RandomUtils.generateRandomString(CommonConstant.RODMIX_NUMBER));
@@ -182,7 +178,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     @Override
     public void updateUserStatus(UserInfo userInfo) {
         baseMapper.updateById(userInfo);
-        if (userInfo.getStatus() == UserStatusEnum.LOCK.getCode()){
+        if (userInfo.getStatus() == UserStatusEnum.LOCK.getCode()) {
             forceLine(userInfo.getUserId());
         }
     }

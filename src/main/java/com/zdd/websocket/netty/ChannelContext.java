@@ -3,6 +3,7 @@ package com.zdd.websocket.netty;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zdd.component.RedisComponent;
+import com.zdd.entry.domain.UserInfo;
 import com.zdd.entry.dto.MeetingExitDto;
 import com.zdd.entry.dto.MeetingMemberDto;
 import com.zdd.entry.dto.MessageSendDto;
@@ -10,6 +11,7 @@ import com.zdd.entry.dto.UserTokenDTO;
 import com.zdd.entry.eum.MeetingMemberStatusEnum;
 import com.zdd.entry.eum.MeetingMemberTypeEnum;
 import com.zdd.entry.eum.MessageTypeEnum;
+import com.zdd.entry.mapper.UserInfoMapper;
 import com.zdd.entry.service.UserInfoService;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ChannelContext {
     @Autowired
-    private UserInfoService userInfoService;
+    private UserInfoMapper userInfoMapper;
     @Autowired
     private RedisComponent redisComponent;
 
@@ -68,7 +70,11 @@ public class ChannelContext {
             USER_CHANNEL_MAP.put(userId, channel);
 
             // 更新用户的最后一次登录时间
-            userInfoService.updateLastLoginTime(userId);
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUserId(userId);
+            userInfo.setLastLoginTime(System.currentTimeMillis());
+            userInfoMapper.updateById(userInfo);
+//            userInfoService.updateLastLoginTime(userId);
 
             // 从Redis中获取用户的令牌信息
             UserTokenDTO userTokenDTO = redisComponent.getUserTokenDTO(userId);

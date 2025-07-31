@@ -66,14 +66,12 @@ public class ResponseVO<T> {
 
     /**
      * 失败响应，带错误信息和数据
-     * @param data 数据内容
      * @return 失败响应对象
      */
-    public static <T> ResponseVO<T> error(T data) {
+    public static <T> ResponseVO<T> error(String msg) {
         return new ResponseVO<T>() {{
             setCode(ERRER_CODE);
-            setMessage(ERRER_MSG);
-            setData(data);
+            setMessage(msg);
         }};
     }
 }

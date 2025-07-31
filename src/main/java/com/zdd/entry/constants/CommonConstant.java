@@ -32,7 +32,8 @@ public class CommonConstant {
     /**
      * 正则表达式：密码
      */
-    public static final String REGEX_PASSWORD = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,18}$";
+//    public static final String REGEX_PASSWORD = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,18}$";
+    public static final String REGEX_PASSWORD = "/^(?=.*\\d)(?=.*[a-zA-Z])[\\da-zA-Z~!@#$%^&*_]{8,}$/";
 
     /**
      * md5 加密盐

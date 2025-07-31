@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
                         violation -> violation.getPropertyPath().toString(),
                         violation -> violation.getMessage()
                 ));
-        log.error("参数异常: {}",errors);
+        log.error("参数异常: {}", errors);
         return ResponseVO.error("参数异常");
     }
 
@@ -56,17 +56,15 @@ public class GlobalExceptionHandler {
      * 处理 BusinessException 异常
      */
     @ExceptionHandler(BusinessException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseVO handleBusinessException(BusinessException e) {
-        log.error("业务异常:code : {} msg:{} e:{}", e.getCode(), e.getMessage(),e);
-        return ResponseVO.errorAndCode(e.getCode(), e.getMessage());
+        log.error("业务异常:code : {} msg:{} e:{}", e.getCode(), e.getMessage(), e);
+        return ResponseVO.error(e.getMessage());
     }
 
     /**
      * 处理 ValidationException 异常
      */
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseVO handleValidationException(ValidationException e) {
         log.error("验证异常: {}", e.getMessage(), e);
         return ResponseVO.error(e.getMessage());

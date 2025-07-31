@@ -16,7 +16,7 @@ import java.util.List;
 */
 public interface UserInfoService extends IService<UserInfo> {
 
-    void register(String email, String password);
+    void register(String email, String password, String nickName);
 
     UserTokenDTO login(String email, String password);
 

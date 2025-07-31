@@ -87,16 +87,17 @@ public class LoginController {
      */
     @PostMapping("/register")
     public ResponseVO register(@NotEmpty @Email @Size(max = 150) String email,
-                               @NotEmpty @Pattern(regexp = CommonConstant.REGEX_PASSWORD, message = "密码必须至少8位，包含字母、数字和特殊字符") String password,
+                               @NotEmpty String password,
                                @NotEmpty String checkCodeKey,
-                               @NotEmpty String checkCode) {
+                               @NotEmpty String checkCode,
+                               String nickName) {
         try {
             // 验证验证码是否匹配
             if (!checkCode.equals(redisComponent.getCheckCode(checkCodeKey))) {
                 throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_903);
             }
             // 验证码匹配，调用服务层方法进行用户注册
-            userInfoService.register(email, password);
+            userInfoService.register(email, password,nickName);
             // 注册成功，返回成功信息
             return ResponseVO.success();
         } finally {
@@ -151,11 +152,7 @@ public class LoginController {
 
     }
 
-    @PostMapping("/getSysSetting")
-    public ResponseVO<SysSettingDto> getSysSetting() {
-        return ResponseVO.success(redisComponent.getSysSetting());
 
-    }
 
 
 
