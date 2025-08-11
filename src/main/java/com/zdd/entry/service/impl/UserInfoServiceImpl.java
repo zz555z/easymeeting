@@ -104,7 +104,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         if (UserStatusEnum.LOCK.getCode() == dbUserInfo.getStatus()) {
             throw new BusinessException("账号被禁用");
         }
-        if (dbUserInfo.getLastLoginTime() != null && dbUserInfo.getLastOffTime() > dbUserInfo.getLastLoginTime()) {
+        if (dbUserInfo.getOnlineType()==1) {
             throw new BusinessException("该账号已在别处登陆");
         }
 

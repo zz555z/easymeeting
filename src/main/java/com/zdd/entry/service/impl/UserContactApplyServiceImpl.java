@@ -16,6 +16,8 @@ import com.zdd.websocket.message.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +43,8 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
 
 
     @Override
-    public Integer saveUserContactApply(UserContactApply userContactApply) {
+    @Transactional
+    public Integer  saveUserContactApply(UserContactApply userContactApply) {
         UserContact contact = getUserContact(userContactApply.getReceiveUserId(), userContactApply.getApplyUserId());
         if (contact != null && Objects.equals(contact.getStatus(), UserContactStatusEnum.BLACKLIST.getStatus())) {
             log.info("对方用户已经把你拉黑 ");
@@ -70,7 +73,7 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
 
         messageHandler.sendMessage(messageSendDto);
 
-        return UserContactApplyStatusEnum.INIT.getStatus();
+        return userContactApplydb == null?userContactApply.getStatus():userContactApplydb.getStatus();
     }
 
     /**
@@ -88,6 +91,7 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
      *                    最后，更新申请状态并发送消息通知申请用户
      */
     @Override
+    @Transactional
     public void dealWithApply(String applyUserId, String userId, String name, Integer status) {
         // 根据状态获取申请状态枚举
         UserContactApplyStatusEnum statusEnum = UserContactApplyStatusEnum.getByStatus(status);
@@ -106,7 +110,7 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
         }
 
         // 如果申请状态为已通过，则更新双方的用户联系状态为好友
-        if (UserContactApplyStatusEnum.PASS.getStatus().equals(userContactApply.getStatus())) {
+        if (UserContactApplyStatusEnum.PASS.getStatus().equals(status)) {
             saveUserContactOrUpdate(applyUserId, userId, UserContactStatusEnum.FRIEND.getStatus());
             saveUserContactOrUpdate(userId, applyUserId, UserContactStatusEnum.FRIEND.getStatus());
         }
@@ -140,7 +144,7 @@ public class UserContactApplyServiceImpl extends ServiceImpl<UserContactApplyMap
             userContactApply.setNickName(userInfo.getNickName());
 
         });
-        return userContactApplyMapper.selectList(queryWrapper);
+        return userContactApplies;
     }
 
     @Override

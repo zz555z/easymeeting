@@ -74,7 +74,7 @@ public class UserInfo {
     private Integer onlineType;
 
     public Integer getOnlineType() {
-        if (lastLoginTime != null && lastLoginTime != null && lastLoginTime >= lastOffTime){
+        if (lastLoginTime != null && lastOffTime != null && lastLoginTime >= lastOffTime){
             return 1;
         }else {
             return 0;

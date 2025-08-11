@@ -41,6 +41,9 @@ public class NettyServer implements Runnable {
     // 线程组 处理业务
     private EventLoopGroup workerGroup = new NioEventLoopGroup(2); // 处理
 
+    // 6s 收不到心跳会断开
+    private static final Long handshakeTimeoutMillis = 6000L;
+
     @Override
     public void run() {
         try {
@@ -86,7 +89,7 @@ public class NettyServer implements Runnable {
                              * long handshakeTimeoutMillis   握手超时时间
                              */
                             pipeline.addLast(new WebSocketServerProtocolHandler("/ws", null, true, 64 * 1024,
-                                    true, true, 10000));
+                                    true, true, handshakeTimeoutMillis));
 
                             // 添加websocket业务处理器
                             pipeline.addLast(websocketHandler);

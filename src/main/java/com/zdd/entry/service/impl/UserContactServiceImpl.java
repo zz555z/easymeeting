@@ -87,7 +87,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
         }
 
         // 如果不符合上述任何条件，返回null
-        return null;
+        return userInfoVO4Search;
     }
 
     @Override
