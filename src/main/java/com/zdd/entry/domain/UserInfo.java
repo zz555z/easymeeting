@@ -67,7 +67,7 @@ public class UserInfo {
     /**
      * 会议号
      */
-    private String mettingNo;
+    private String meetingNo;
 
 
     @TableField(exist = false)
@@ -102,7 +102,7 @@ public class UserInfo {
                 && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
                 && (this.getLastLoginTime() == null ? other.getLastLoginTime() == null : this.getLastLoginTime().equals(other.getLastLoginTime()))
                 && (this.getLastOffTime() == null ? other.getLastOffTime() == null : this.getLastOffTime().equals(other.getLastOffTime()))
-                && (this.getMettingNo() == null ? other.getMettingNo() == null : this.getMettingNo().equals(other.getMettingNo()));
+                && (this.getMeetingNo() == null ? other.getMeetingNo() == null : this.getMeetingNo().equals(other.getMeetingNo()));
     }
 
     @Override
@@ -118,7 +118,7 @@ public class UserInfo {
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getLastLoginTime() == null) ? 0 : getLastLoginTime().hashCode());
         result = prime * result + ((getLastOffTime() == null) ? 0 : getLastOffTime().hashCode());
-        result = prime * result + ((getMettingNo() == null) ? 0 : getMettingNo().hashCode());
+        result = prime * result + ((getMeetingNo() == null) ? 0 : getMeetingNo().hashCode());
         return result;
     }
 
@@ -137,7 +137,7 @@ public class UserInfo {
         sb.append(", createTime=").append(createTime);
         sb.append(", lastLoginTime=").append(lastLoginTime);
         sb.append(", lastOffTime=").append(lastOffTime);
-        sb.append(", mettingNo=").append(mettingNo);
+        sb.append(", meetingNo=").append(meetingNo);
         sb.append("]");
         return sb.toString();
     }

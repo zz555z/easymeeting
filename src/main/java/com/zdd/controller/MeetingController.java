@@ -80,7 +80,7 @@ public class MeetingController {
      */
     @PostMapping("/quickMeeting")
     @GlobalInterceptor()
-    public ResponseVO quickMeeting(@NotNull Integer meetingType,
+    public ResponseVO quickMeeting(@NotNull Integer meetingNoType,
                                    @NotEmpty @Size(max = 50) String meetingName,
                                    @NotNull Integer joinType,
                                    String joinPassword) {
@@ -93,7 +93,7 @@ public class MeetingController {
 
 
         // 保存会议信息到数据库
-        MeetingInfo meetingInfo =  meetingInfoService.quickMeeting(meetingType,meetingName,joinType,joinPassword,userTokenDTO.getUserId());
+        MeetingInfo meetingInfo =  meetingInfoService.quickMeeting(meetingNoType,meetingName,joinType,joinPassword,userTokenDTO.getUserId());
 
         // 更新用户令牌信息，关联当前会议
         userTokenDTO.setCurrentMeetingId(meetingInfo.getMeetingId());

@@ -86,7 +86,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         userInfo.setNickName(StringUtils.isEmpty(nickName) ? RandomUtils.generateRandomString(CommonConstant.RODMIX_NUMBER) : nickName);
         userInfo.setStatus(UserStatusEnum.NORMAL.getCode());
         userInfo.setSex(UserSexEnum.UNKNOWN.getCode());
-        userInfo.setMettingNo(RandomUtils.generateRandomString(CommonConstant.RODMIX_NUMBER));
+        userInfo.setMeetingNo(RandomUtils.generateRandomString(CommonConstant.RODMIX_NUMBER));
         userInfo.setCreateTime(new Date());
         // 保存用户信息到数据库
         this.save(userInfo);
@@ -112,7 +112,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         this.updateById(dbUserInfo);
 
         UserTokenDTO userTokenDTO = CopyTools.copy(dbUserInfo, UserTokenDTO.class);
-
         userTokenDTO.setAdmin(email.equals(appConfig.getEmail()));
 
         log.info("用户登录成功：{} ", userTokenDTO);

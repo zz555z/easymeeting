@@ -384,7 +384,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
     }
 
     @Override
-    public MeetingInfo quickMeeting(Integer meetingType, String meetingName, Integer joinType, String joinPassword, String userId) {
+    public MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, String userId) {
         // 初始化会议信息对象
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setMeetingName(meetingName);

@@ -17,7 +17,7 @@ public class UserTokenDTO implements Serializable {
     private String token;
     private String currentMeetingId;  //加入的会议id
     private String currentMeetingName;  //会议中的名字
-    private String mettingNo;  //自己的会议好
+    private String meetingNo;  //自己的会议好
     private Boolean admin;
     private Integer sex;
     private long expireAt;

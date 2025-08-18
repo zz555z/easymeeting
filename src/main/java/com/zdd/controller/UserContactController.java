@@ -120,9 +120,9 @@ public class UserContactController {
 
     @PostMapping("/updatePassword")
     @GlobalInterceptor()
-    public ResponseVO updatePassword(@NotEmpty String oldPassword,@NotEmpty String newPassword) {
+    public ResponseVO updatePassword(@NotEmpty String oldPassword,@NotEmpty String rePassword) {
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
-        userInfoService.updatePassword(userTokenDTO,oldPassword, newPassword);
+        userInfoService.updatePassword(userTokenDTO,oldPassword, rePassword);
         return ResponseVO.success();
 
     }

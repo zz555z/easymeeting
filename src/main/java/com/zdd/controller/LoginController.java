@@ -145,7 +145,7 @@ public class LoginController {
     }
 
 
-    @PostMapping("/loginOut")
+    @PostMapping("/logout")
     public ResponseVO loginOut(HttpServletResponse response) {
 //        clearCookie(response);
         return ResponseVO.success();
