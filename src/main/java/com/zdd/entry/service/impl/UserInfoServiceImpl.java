@@ -115,6 +115,11 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         userTokenDTO.setAdmin(email.equals(appConfig.getEmail()));
 
         log.info("用户登录成功：{} ", userTokenDTO);
+
+        UserTokenDTO userTokenDTOr = redisComponent.getUserTokenDTO(dbUserInfo.getUserId());
+        if (userTokenDTOr != null){
+            redisComponent.deleteUserTokenDTO(userTokenDTOr);
+        }
         return redisComponent.setUserTokenDTO(userTokenDTO);
 
     }

@@ -37,7 +37,7 @@ public interface MeetingInfoService extends IService<MeetingInfo> {
 
     void createMeetingReserve(String startTime, String meetingName, Integer duration, Integer joinType, String password, String userIds, UserTokenDTO userTokenDTO);
 
-    MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, String userId);
+    MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, UserTokenDTO userId);
 
     void delMeetingReserve(String meetingId, String userId);
     void delMeetingReserveByUser(String meetingId, String userId);

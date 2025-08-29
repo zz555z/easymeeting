@@ -144,7 +144,7 @@ public class ChannelContext {
      */
     private void send2Group(MessageSendDto messageSendDto) {
         // 检查消息ID是否存在，如果不存在则直接返回
-        if (messageSendDto.getMessageId() == null) {
+        if (messageSendDto.getMeetingId() == null) {
             return;
         }
 

@@ -384,17 +384,18 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
     }
 
     @Override
-    public MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, String userId) {
+    public MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, UserTokenDTO userTokenDTO) {
+
         // 初始化会议信息对象
         MeetingInfo meetingInfo = new MeetingInfo();
         meetingInfo.setMeetingName(meetingName);
         meetingInfo.setJoinType(joinType);
         meetingInfo.setJoinPassword(joinPassword);
         // 根据会议类型生成会议号
-        meetingInfo.setMeetingNo(CommonUtils.getMeetingNo());
+        meetingInfo.setMeetingNo(meetingNoType == 0 ? userTokenDTO.getMeetingNo() : CommonUtils.getMeetingNo());
         meetingInfo.setStatus(MeetingStatusEnum.RUN.getStatus());
         meetingInfo.setCreateTime(new Date());
-        meetingInfo.setCreateUserId(userId);
+        meetingInfo.setCreateUserId(userTokenDTO.getUserId());
         meetingInfo.setMeetingId(CommonUtils.getMeetingId());
         baseMapper.insert(meetingInfo);
         return meetingInfo;

@@ -72,7 +72,6 @@ public class MeetingController {
      * 快速创建会议接口
      * 此接口用于用户快速创建会议，根据不同的会议类型生成会议号，并保存会议信息
      *
-     * @param meetingType  会议类型，不能为空，0表示默认类型，其他值表示非默认类型
      * @param meetingName  会议名称，不能为空且长度不超过50
      * @param joinType     加入会议的方式，不能为空
      * @param joinPassword 加入会议的密码，可为空
@@ -93,7 +92,7 @@ public class MeetingController {
 
 
         // 保存会议信息到数据库
-        MeetingInfo meetingInfo =  meetingInfoService.quickMeeting(meetingNoType,meetingName,joinType,joinPassword,userTokenDTO.getUserId());
+        MeetingInfo meetingInfo =  meetingInfoService.quickMeeting(meetingNoType,meetingName,joinType,joinPassword,userTokenDTO);
 
         // 更新用户令牌信息，关联当前会议
         userTokenDTO.setCurrentMeetingId(meetingInfo.getMeetingId());
@@ -111,7 +110,7 @@ public class MeetingController {
      * 该方法用于验证用户加入会议前提供的信息是否有效，包括会议编号、昵称和加入密码
      *
      * @param meetingNo    会议编号，不能为空，用于识别特定的会议
-     * @param nikeName     用户昵称，不能为空且长度不超过50，用于在会议中标识用户
+     * @param nickName     用户昵称，不能为空且长度不超过50，用于在会议中标识用户
      * @param joinPassword 加入会议的密码，可选，根据会议设置可能需要提供
      * @return 返回一个包含会议ID的响应对象，表示用户可以加入的会议
      * <p>
@@ -120,7 +119,7 @@ public class MeetingController {
     @PostMapping("/preJoinMeeting")
     @GlobalInterceptor()
     public ResponseVO preJoinMeeting(@NotNull String meetingNo,
-                                     @NotEmpty @Size(max = 50) String nikeName,
+                                     @NotEmpty @Size(max = 50) String nickName,
                                      String joinPassword) {
         // 获取用户令牌信息，用于验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
@@ -129,7 +128,7 @@ public class MeetingController {
         meetingNo = meetingNo.replaceAll(" ", "");
 
         // 设置用户当前加入会议时使用的昵称
-        userTokenDTO.setCurrentMeetingName(nikeName);
+        userTokenDTO.setCurrentMeetingName(nickName);
 
         // 调用服务层方法，处理用户预加入会议的请求，并获取会议ID
         String meetingId = meetingInfoService.preJoinMeeting(meetingNo, userTokenDTO, joinPassword);

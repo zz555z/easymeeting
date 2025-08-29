@@ -41,10 +41,10 @@ public class RedisComponent {
             userTokenDTO.setExpireAt(System.currentTimeMillis() + CommonConstant.REDIS_KEY_TIME_ONE_DAY * 7);
         }
 
-//        redisUtils.setex(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getToken(), userTokenDTO, CommonConstant.REDIS_KEY_TIME_ONE_DAY * 7);
-//        redisUtils.setex(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getUserId(), userTokenDTO, CommonConstant.REDIS_KEY_TIME_ONE_DAY * 7);
-        redisUtils.set(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getToken(), userTokenDTO);
-        redisUtils.set(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getUserId(), userTokenDTO);
+        redisUtils.setex(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getToken(), userTokenDTO, CommonConstant.REDIS_KEY_TIME_ONE_DAY * 7);
+        redisUtils.setex(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getUserId(), userTokenDTO, CommonConstant.REDIS_KEY_TIME_ONE_DAY * 7);
+//        redisUtils.set(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getToken(), userTokenDTO);
+//        redisUtils.set(CommonConstant.REDIS_KEY_USER_TOKEN + userTokenDTO.getUserId(), userTokenDTO);
 
         return userTokenDTO;
     }
