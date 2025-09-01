@@ -40,7 +40,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
         if (msg.contains(CommonConstant.NETTY_PING)){
             return;
         }
-        log.info("收到消息：{}", msg);
+        log.info("ws 收到消息：{}", msg);
         PeerConnectionDataDto dataDto = JSONObject.parseObject(msg, PeerConnectionDataDto.class);
         UserTokenDTO userTokenDTO = redisComponent.getUserTokenDTO(dataDto.getToken());
         if (userTokenDTO == null){

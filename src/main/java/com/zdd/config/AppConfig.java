@@ -11,4 +11,6 @@ public class AppConfig {
     private String email;
     private int wsPort;
     private String folder;
+    private Integer meetingDuration;
+
 }

@@ -280,10 +280,10 @@ public class MeetingController {
 
     @PostMapping("/sendOpenVideoChangeMessage")
     @GlobalInterceptor()
-    public ResponseVO sendVideoChangeMessage(@NotNull  Boolean  flag) {
+    public ResponseVO sendVideoChangeMessage(@NotNull  Boolean  openVideo) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
-        meetingInfoService.updateMemberOpenVideo(userTokenDTO.getCurrentMeetingId(),userTokenDTO.getUserId(),flag);
+        meetingInfoService.updateMemberOpenVideo(userTokenDTO.getCurrentMeetingId(),userTokenDTO.getUserId(),openVideo);
         return ResponseVO.success();
     }
 }

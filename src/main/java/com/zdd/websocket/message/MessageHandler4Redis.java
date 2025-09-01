@@ -39,7 +39,7 @@ public class MessageHandler4Redis implements MessageHandler {
         // 为该主题添加消息监听器，指定监听的消息类型为MessageSendDto
         topic.addListener(MessageSendDto.class, (MessageSendDto, sendDto) -> {
             // 当接收到消息时，记录日志信息
-            log.info("接收到消息:{}", JSONObject.toJSON(sendDto));
+//            log.info("redis 接收到消息:{}", JSONObject.toJSON(sendDto));
 
             // 将接收到的消息发送给客户端上下文
             channelContext.sendMsg(sendDto);

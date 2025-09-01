@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zdd.component.RedisComponent;
+import com.zdd.config.AppConfig;
 import com.zdd.entry.domain.MeetingInfo;
 import com.zdd.entry.domain.MeetingMember;
 import com.zdd.entry.domain.MeetingReserveMember;
@@ -383,6 +384,8 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
 
     }
 
+    @Autowired
+    private AppConfig appConfig;
     @Override
     public MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, UserTokenDTO userTokenDTO) {
 
@@ -397,6 +400,11 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
         meetingInfo.setCreateTime(new Date());
         meetingInfo.setCreateUserId(userTokenDTO.getUserId());
         meetingInfo.setMeetingId(CommonUtils.getMeetingId());
+
+        Date date = new Date();
+        meetingInfo.setStartTime(date);
+        meetingInfo.setDuration(appConfig.getMeetingDuration());
+        meetingInfo.setEndTime(CommonUtils.addMinutes(date, appConfig.getMeetingDuration()));
         baseMapper.insert(meetingInfo);
         return meetingInfo;
 
@@ -621,15 +629,20 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
 
 
     private void addMeetingMember(UserTokenDTO userTokenDTO, MeetingInfo meetingInfo) {
-        MeetingMember meetingMember = new MeetingMember();
-        meetingMember.setMeetingId(meetingInfo.getMeetingId());
-        meetingMember.setUserId(userTokenDTO.getUserId());
-        meetingMember.setNickName(userTokenDTO.getNickName());
-        meetingMember.setLastJoinTime(new Date());
-        meetingMember.setStatus(MeetingMemberStatusEnum.NORMAL.getStatus());
-        meetingMember.setMemberType(userTokenDTO.getUserId().equals(meetingInfo.getCreateUserId()) ? MeetingMemberTypeEnum.COMPERE.getStatus() : MeetingMemberTypeEnum.NORMAL.getStatus());
-        meetingMember.setMeetingStatus(MeetingStatusEnum.RUN.getStatus());
-        meetingMemberMapper.insert(meetingMember);
+        MeetingMember meetingMemberdb = meetingMemberMapper.selectOne(new QueryWrapper<MeetingMember>().eq("meeting_id", meetingInfo.getMeetingId())
+                .eq("user_id", userTokenDTO.getUserId()));
+        if (meetingMemberdb == null){
+            MeetingMember meetingMember = new MeetingMember();
+            meetingMember.setMeetingId(meetingInfo.getMeetingId());
+            meetingMember.setUserId(userTokenDTO.getUserId());
+            meetingMember.setNickName(userTokenDTO.getNickName());
+            meetingMember.setLastJoinTime(new Date());
+            meetingMember.setStatus(MeetingMemberStatusEnum.NORMAL.getStatus());
+            meetingMember.setMemberType(userTokenDTO.getUserId().equals(meetingInfo.getCreateUserId()) ? MeetingMemberTypeEnum.COMPERE.getStatus() : MeetingMemberTypeEnum.NORMAL.getStatus());
+            meetingMember.setMeetingStatus(MeetingStatusEnum.RUN.getStatus());
+            meetingMemberMapper.insert(meetingMember);
+        }
+
 
     }
 

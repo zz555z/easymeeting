@@ -116,3 +116,4 @@ admin:
   emails: test@qq.com
   folder: ${user.dir}
   wsPort: 6061    # netty端口
+  meetingDuration: 30  #默认30分钟
