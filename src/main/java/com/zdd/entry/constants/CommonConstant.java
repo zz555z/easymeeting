@@ -68,5 +68,5 @@ public class CommonConstant {
     public static final String VIDEO_SUFFIX = ".mp4";
 
 
-    public static final String DEFAULT_AVATAR = "/user.png";
+    public static final String DEFAULT_AVATAR = "user.png";
 }

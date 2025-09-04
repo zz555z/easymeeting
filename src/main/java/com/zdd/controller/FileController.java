@@ -26,6 +26,7 @@ import java.util.Date;
 
 @RestController
 @Slf4j
+@RequestMapping("/file")
 public class FileController {
     @Autowired
     private RedisComponent redisComponent;
@@ -204,17 +205,17 @@ public class FileController {
         if (null == userTokenDTO) {
             throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_900);
         }
-        String filePath = appConfig.getFolder() + CommonConstant.FIlE + CommonConstant.FIlE_AVATAR + userId + CommonConstant.IMAGE_SUFFIX;
+        String filePath  =appConfig.getFolder()+File.separator + CommonConstant.FIlE + CommonConstant.FIlE_AVATAR;
+        String fileName = filePath + userId + CommonConstant.IMAGE_SUFFIX;
         response.setContentType("image/jpg");
-        File file = new File(filePath);
+        File file = new File(fileName);
         if (!file.exists()) {
-            readLocalFile(response);
-            return;
+            fileName = filePath + CommonConstant.DEFAULT_AVATAR;
         }
-        readFile(response, null, filePath, false);
+        readFile(response, null, fileName, false);
     }
 
-    private void readLocalFile(HttpServletResponse response) {
+    private void readLocalFile(HttpServletResponse response,String filePath) {
         response.setHeader("Cache-Control", "max-age=" + 30 * 24 * 60 * 60);
         response.setContentType("image/jpg");
         // 读取文件

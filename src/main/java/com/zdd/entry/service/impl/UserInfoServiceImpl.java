@@ -104,7 +104,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         if (UserStatusEnum.LOCK.getCode() == dbUserInfo.getStatus()) {
             throw new BusinessException("账号被禁用");
         }
-        if (dbUserInfo.getOnlineType()==1) {
+        if (dbUserInfo.getOnlineType() == 1) {
             throw new BusinessException("该账号已在别处登陆");
         }
 
@@ -117,7 +117,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         log.info("用户登录成功：{} ", userTokenDTO);
 
         UserTokenDTO userTokenDTOr = redisComponent.getUserTokenDTO(dbUserInfo.getUserId());
-        if (userTokenDTOr != null){
+        if (userTokenDTOr != null) {
             redisComponent.deleteUserTokenDTO(userTokenDTOr);
         }
         return redisComponent.setUserTokenDTO(userTokenDTO);
@@ -135,14 +135,14 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     @Override
     public void updateUserInfo(UserInfo userInfo, MultipartFile multipartFile) throws IOException {
         if (multipartFile != null) {
-            String avatrPath = CommonUtils.getAvatrPath(appConfig.getFolder());
-            File avatarFile = new File(avatrPath);
-            if (!avatarFile.exists()) {
-                avatarFile.mkdirs();
-            }
-            String fileName = avatrPath + userInfo.getUserId() + CommonConstant.IMAGE_SUFFIX;
+            String avatarPath = CommonUtils.getAvatrPath(appConfig.getFolder());
+            createFileFolder(new File(avatarPath));
+            String fileName = avatarPath + userInfo.getUserId() + CommonConstant.IMAGE_SUFFIX;
 
-            File tmpFile = new File(CommonUtils.getTmpPath(appConfig.getFolder()) + CommonUtils.getMeetingNo());
+            String tmpAvatarPath = CommonUtils.getTmpPath(appConfig.getFolder());
+            String tmpAvatarName = tmpAvatarPath + CommonUtils.getMeetingNo();
+            createFileFolder(new File(tmpAvatarPath));
+            File tmpFile = new File(tmpAvatarName);
             multipartFile.transferTo(tmpFile);
             fFmpegUtils.createImageThumbnail(tmpFile, fileName);
         }
@@ -153,6 +153,18 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         userTokenDTO.setNickName(userInfo.getNickName());
         redisComponent.setUserTokenDTO(userTokenDTO);
 
+    }
+
+
+    /**
+     * 文件目录不存在则创建文件目录
+     *
+     * @param file
+     */
+    private void createFileFolder(File file) {
+        if (!file.exists()) {
+            file.mkdirs();
+        }
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -103,7 +104,7 @@ public class UserContactController {
     @PostMapping("/updateUserInfo")
     @GlobalInterceptor()
 
-    public ResponseVO updateUserInfo(MultipartFile multipartFile,
+    public ResponseVO updateUserInfo( MultipartFile avatar,
                                      @NotEmpty String nickName,
                                      @NotNull Integer sex) throws IOException {
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
@@ -111,7 +112,7 @@ public class UserContactController {
         userInfo.setUserId(userTokenDTO.getUserId());
         userInfo.setNickName(nickName);
         userInfo.setSex(sex);
-        userInfoService.updateUserInfo(userInfo, multipartFile);
+        userInfoService.updateUserInfo(userInfo, avatar);
 
 
         return ResponseVO.success();

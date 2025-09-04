@@ -156,15 +156,15 @@ public class CommonUtils {
     }
 
     public static String getImageAndVideoPath(String filePath, Long sendTime) {
-        return filePath + CommonConstant.FIlE + CommonConstant.FILE_IMAGE + CommonUtils.dateToStringYYYYMMDD(new Date(sendTime));
+        return filePath +File.separator+ CommonConstant.FIlE + CommonConstant.FILE_IMAGE + CommonUtils.dateToStringYYYYMMDD(new Date(sendTime));
 
     }
     public static String getTmpPath(String filePath) {
-        return filePath + CommonConstant.FIlE + CommonConstant.FIlE_TMP;
+        return filePath +File.separator+ CommonConstant.FIlE + CommonConstant.FIlE_TMP;
     }
 
     public static String getAvatrPath(String filePath) {
-        return filePath + CommonConstant.FIlE + CommonConstant.FIlE_AVATAR ;
+        return filePath +File.separator+ CommonConstant.FIlE + CommonConstant.FIlE_AVATAR ;
 
     }
 
