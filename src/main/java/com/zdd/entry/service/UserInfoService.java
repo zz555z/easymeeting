@@ -31,4 +31,6 @@ public interface UserInfoService extends IService<UserInfo> {
     void updateUserStatus(UserInfo userInfo);
 
     void forceLine(String userId);
+
+    void loginOut(UserTokenDTO userTokenDTO);
 }

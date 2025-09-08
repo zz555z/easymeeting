@@ -104,11 +104,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         if (UserStatusEnum.LOCK.getCode() == dbUserInfo.getStatus()) {
             throw new BusinessException("账号被禁用");
         }
-        if (dbUserInfo.getOnlineType() == 1) {
-            throw new BusinessException("该账号已在别处登陆");
-        }
+//        if (dbUserInfo.getOnlineType() == 1) {
+//            throw new BusinessException("该账号已在别处登陆");
+//        }
 
         dbUserInfo.setLastLoginTime(System.currentTimeMillis());
+        dbUserInfo.setLastOffTime(System.currentTimeMillis());
         this.updateById(dbUserInfo);
 
         UserTokenDTO userTokenDTO = CopyTools.copy(dbUserInfo, UserTokenDTO.class);
@@ -214,6 +215,13 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
 
         redisComponent.deleteUserTokenDTO(redisComponent.getUserTokenDTO(userId));
 
+    }
+
+    @Override
+    public void loginOut(UserTokenDTO userTokenDTO) {
+        UserInfo dbUserInfo = baseMapper.selectById(userTokenDTO.getUserId());
+        dbUserInfo.setLastOffTime(System.currentTimeMillis());
+        baseMapper.updateById(dbUserInfo);
     }
 }
 

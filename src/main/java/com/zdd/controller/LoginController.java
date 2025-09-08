@@ -1,6 +1,7 @@
 package com.zdd.controller;
 
 import com.wf.captcha.ArithmeticCaptcha;
+import com.zdd.aop.annotation.GlobalInterceptor;
 import com.zdd.component.RedisComponent;
 import com.zdd.config.TokenInterceptor;
 import com.zdd.entry.constants.CommonConstant;
@@ -131,7 +132,7 @@ public class LoginController {
         try {
             // 验证码验证
             if (!checkCode.equals(redisComponent.getCheckCode(checkCodeKey))) {
-                throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_903);
+                throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_909);
             }
             // 用户登录逻辑处理
             UserTokenDTO userTokenDTO = userInfoService.login(email, password);
@@ -144,10 +145,12 @@ public class LoginController {
 
     }
 
-
+    @GlobalInterceptor()
     @PostMapping("/logout")
     public ResponseVO loginOut(HttpServletResponse response) {
 //        clearCookie(response);
+        UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
+        userInfoService.loginOut(userTokenDTO);
         return ResponseVO.success();
 
     }

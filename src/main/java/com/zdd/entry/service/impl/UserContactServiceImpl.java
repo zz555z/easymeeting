@@ -103,6 +103,7 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
             userContactApply.setNickName(userInfo.getNickName());
             userContactApply.setLastLoginTime(userInfo.getLastLoginTime());
             userContactApply.setLastOffTime(userInfo.getLastOffTime());
+            userContactApply.setOnlinetype(userInfo.getOnlineType());
         });
         return userContactList;
     }

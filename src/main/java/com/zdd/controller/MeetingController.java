@@ -261,10 +261,10 @@ public class MeetingController {
 
     @PostMapping("/inviteMember")
     @GlobalInterceptor()
-    public ResponseVO inviteMember(@NotEmpty String userIds) {
+    public ResponseVO inviteMember(@NotEmpty String selectContactIds) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
-        meetingInfoService.inviteMember(userTokenDTO, userIds);
+        meetingInfoService.inviteMember(userTokenDTO, selectContactIds);
         return ResponseVO.success();
     }
 

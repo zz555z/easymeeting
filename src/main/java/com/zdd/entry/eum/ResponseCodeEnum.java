@@ -9,13 +9,15 @@ public enum ResponseCodeEnum {
     RESPONSE_CODE_905(905,"请添加联系人为好友"),
     RESPONSE_CODE_906(906,"请重新加入群聊"),
     RESPONSE_CODE_907(907,"邮箱已存在"),
-    RESPONSE_CODE_908(908,"存在未结束的会议")
+    RESPONSE_CODE_908(908,"存在未结束的会议"),
+    RESPONSE_CODE_909(909,"验证码错误"),
 
 
 
 
 
-    ;
+
+            ;
 
     private int code;
     private String desc;
