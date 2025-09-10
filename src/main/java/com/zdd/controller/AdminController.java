@@ -92,8 +92,8 @@ public class AdminController {
     }
 
     @PostMapping("/getSysSetting")
-    @GlobalInterceptor(checkAdmin = true)
-    public ResponseVO getSysSetting(SysSettingDto sysSettingDto) {
+//    @GlobalInterceptor(checkAdmin = true)
+    public ResponseVO getSysSetting() {
         return ResponseVO.success(redisComponent.getSysSetting());
     }
 

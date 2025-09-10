@@ -571,6 +571,9 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
             log.info("邀请信息已过期");
             throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_903);
         }
+
+        checkMeetingMember(meetingId, userTokenDTO.getUserId());
+
         userTokenDTO.setCurrentMeetingId(meetingId);
         userTokenDTO.setCurrentMeetingName(userTokenDTO.getNickName());
         redisComponent.setUserTokenDTO(userTokenDTO);

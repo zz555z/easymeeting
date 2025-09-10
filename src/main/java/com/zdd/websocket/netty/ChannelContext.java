@@ -154,6 +154,8 @@ public class ChannelContext {
 
         // 检查频道分组是否存在，如果不存在则直接返回
         if (channels == null) {
+            log.info("会议id:{} 对应的群组不存在", meetingId);
+
             return;
         }
         String jsonString = JSON.toJSONString(messageSendDto);

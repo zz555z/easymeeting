@@ -94,8 +94,8 @@ public class MeetingChatMessageServiceImpl extends ServiceImpl<MeetingChatMessag
 
         if (meetingChatMessage.getReceiveType().equals(ReceiveTypeEnum.USER.getStatus())) {
             messageSendDto.setMessageSend2Type(MessageSendTypeEnum.USER.getCode());
-            messageHandler.sendMessage(messageSendDto);
-            messageSendDto.setReceiveUserId(meetingChatMessage.getSendUserId());
+//            messageHandler.sendMessage(messageSendDto);
+            messageSendDto.setReceiveUserId(meetingChatMessage.getReceiveUserId());
             messageHandler.sendMessage(messageSendDto);
 
         } else {

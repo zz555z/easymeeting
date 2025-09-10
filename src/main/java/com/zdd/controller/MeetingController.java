@@ -173,11 +173,11 @@ public class MeetingController {
 
     @PostMapping("/kickOutMeeting")
     @GlobalInterceptor()
-    public ResponseVO kickOutMeeting(@NotEmpty String userid) {
+    public ResponseVO kickOutMeeting(@NotEmpty String userId) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
 
-        meetingInfoService.kickOutMeeting(userTokenDTO, MeetingMemberStatusEnum.KICK_OUT.getStatus(), userid);
+        meetingInfoService.kickOutMeeting(userTokenDTO, MeetingMemberStatusEnum.KICK_OUT.getStatus(), userId);
 
         return ResponseVO.success();
     }
@@ -185,11 +185,11 @@ public class MeetingController {
 
     @PostMapping("/blackMeeting")
     @GlobalInterceptor()
-    public ResponseVO blackMeeting(@NotEmpty String userid) {
+    public ResponseVO blackMeeting(@NotEmpty String userId) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
 
-        meetingInfoService.kickOutMeeting(userTokenDTO, MeetingMemberStatusEnum.BLACKLIST.getStatus(), userid);
+        meetingInfoService.kickOutMeeting(userTokenDTO, MeetingMemberStatusEnum.BLACKLIST.getStatus(), userId);
 
         return ResponseVO.success();
     }
