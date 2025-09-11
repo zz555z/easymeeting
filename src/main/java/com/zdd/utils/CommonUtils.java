@@ -2,6 +2,7 @@ package com.zdd.utils;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.zdd.entry.constants.CommonConstant;
+import com.zdd.entry.eum.FileTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -155,8 +156,8 @@ public class CommonUtils {
         return filePath + CommonConstant.IMAGETHUMBNAIL + CommonConstant.IMAGE_SUFFIX;
     }
 
-    public static String getImageAndVideoPath(String filePath, Long sendTime) {
-        return filePath +File.separator+ CommonConstant.FIlE + CommonConstant.FILE_IMAGE + CommonUtils.dateToStringYYYYMMDD(new Date(sendTime));
+    public static String getUploadFilePath(String filePath, Long sendTime, FileTypeEnum fileTypeEnum) {
+        return filePath +File.separator+ CommonConstant.FIlE + CommonConstant.FILE_IMAGE + CommonUtils.dateToStringYYYYMMDD(new Date(sendTime))+File.separator+fileTypeEnum.getCode();
 
     }
     public static String getTmpPath(String filePath) {

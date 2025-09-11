@@ -12,10 +12,7 @@ import com.zdd.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +32,7 @@ public class FileController {
     private AppConfig appConfig;
 
 
-    @PostMapping("/getResource")
+    @GetMapping("/getResource")
     @GlobalInterceptor(checkLogin = false)
     public void getResource(HttpServletResponse response,
                             @RequestHeader(required = false, name = "range") String range,
@@ -58,7 +55,7 @@ public class FileController {
 
         thumnail = thumnail == null ? false : thumnail;
 
-        String folder = CommonUtils.getImageAndVideoPath(appConfig.getFolder(), sendTime);
+        String folder = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime,fileTypeEnum)+File.separator+messageId+fileTypeEnum.getSuffix();
 
         switch (fileTypeEnum) {
             case IMAGE:
@@ -177,12 +174,12 @@ public class FileController {
 
     @RequestMapping("downloadFile")
     @GlobalInterceptor(checkLogin = false)
-    public void downloadFile(HttpServletResponse response, @NotEmpty String token, @NotEmpty String messageId, @NotNull Long sendTime) throws IOException {
+    public void downloadFile(HttpServletResponse response, @NotEmpty String token, @NotEmpty String messageId, @NotNull Long sendTime,String fi) throws IOException {
         UserTokenDTO userTokenDTO = redisComponent.getUserTokenDTO(token);
         if (null == userTokenDTO) {
             throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_900);
         }
-        String filePath = CommonUtils.getImageAndVideoPath(appConfig.getFolder(), sendTime);
+        String filePath = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime,FileTypeEnum.IMAGE);
         File file = new File(filePath);
         response.setContentType("application/x-msdownload; charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment;");

@@ -49,7 +49,7 @@ public class CommonConstant {
     public static final String FIlE = "file/";
     public static final String FIlE_TMP = "tmp/";
     public static final String FIlE_AVATAR = "avatar/";
-    public static final String FILE_IMAGE = "image_video/";
+    public static final String FILE_IMAGE = "uploadFile/";
     public static final String EXE_FILE_PATH = "exe/";
     public static final String EXE_SUFFIX = ".exe";
 

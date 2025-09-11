@@ -17,7 +17,7 @@ public interface MeetingChatMessageService extends IService<MeetingChatMessage> 
 
     List<MeetingChatMessage> loadMessage(UserTokenDTO userTokenDTO, Long maxMessageId, Integer pageNo);
 
-    void saveChatMessage(MeetingChatMessage meetingChatMessage);
+    MeetingChatMessage saveChatMessage(MeetingChatMessage meetingChatMessage);
 
     List<MeetingChatMessage> uploadFile(MultipartFile multipartFile, Long messageId, Long sendTime, String currentMeetingId) throws IOException;
 

@@ -72,7 +72,7 @@ public class ChatController {
         }
         meetingChatMessage.setReceiveUserId(receiveUserId);
 
-        meetingChatMessageService.saveChatMessage(meetingChatMessage);
+        meetingChatMessage =   meetingChatMessageService.saveChatMessage(meetingChatMessage);
 
         return ResponseVO.success(meetingChatMessage);
     }

@@ -56,7 +56,7 @@ public class MeetingChatMessageServiceImpl extends ServiceImpl<MeetingChatMessag
     }
 
     @Override
-    public void saveChatMessage(MeetingChatMessage meetingChatMessage) {
+    public MeetingChatMessage saveChatMessage(MeetingChatMessage meetingChatMessage) {
         List<Integer> stausList = Arrays.asList(MessageTypeEnum.CHAT_TEXT_MESSAGE.getType(), MessageTypeEnum.CHAT_MEDIA_MESSAGE.getType());
         if (!stausList.contains(meetingChatMessage.getMessageType())) {
             throw new BusinessException("不存在的消息类型");
@@ -89,6 +89,9 @@ public class MeetingChatMessageServiceImpl extends ServiceImpl<MeetingChatMessag
             meetingChatMessage.setFileSuffix(CommonUtils.getFileSuffix(meetingChatMessage.getFileName()));
         }
 
+
+        this.baseMapper.insert(meetingChatMessage);
+
         MessageSendDto<Object> messageSendDto = new MessageSendDto<>();
         BeanUtils.copyProperties(meetingChatMessage, messageSendDto);
 
@@ -104,14 +107,21 @@ public class MeetingChatMessageServiceImpl extends ServiceImpl<MeetingChatMessag
 
         }
 
+        return meetingChatMessage;
 
-        this.baseMapper.insert(meetingChatMessage);
     }
 
     @Override
     public List<MeetingChatMessage> uploadFile(MultipartFile multipartFile, Long messageId, Long sendTime, String currentMeetingId) throws IOException {
 
-        String folder = CommonUtils.getImageAndVideoPath(appConfig.getFolder(), sendTime);
+        String fileSuffix = CommonUtils.getFileSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        FileTypeEnum fileTypeEnum = FileTypeEnum.fromSuffix(fileSuffix);
+
+
+        String folder = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime,fileTypeEnum);
+
+
+        String filePath = folder + File.separator + messageId;
 
 
         log.info("上传文件目录：{}", folder);
@@ -120,11 +130,6 @@ public class MeetingChatMessageServiceImpl extends ServiceImpl<MeetingChatMessag
             file.mkdirs();
         }
 
-
-        String filePath = folder + File.separator + messageId;
-        String fileSuffix = CommonUtils.getFileSuffix(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        log.info("文件路径filePath:{} --- 文件后缀fileSuffix:{}", filePath, fileSuffix);
-        FileTypeEnum fileTypeEnum = FileTypeEnum.fromSuffix(fileSuffix);
         if (fileTypeEnum == FileTypeEnum.IMAGE) {
             File tmpFile = transferToTmpFile(multipartFile);
             filePath = filePath + CommonConstant.IMAGE_SUFFIX;
