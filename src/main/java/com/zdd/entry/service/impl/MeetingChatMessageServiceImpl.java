@@ -142,7 +142,7 @@ public class MeetingChatMessageServiceImpl extends ServiceImpl<MeetingChatMessag
         }
 
         MeetingChatMessage meetingChatMessage = new MeetingChatMessage();
-        meetingChatMessage.setMeetingId(currentMeetingId);
+//        meetingChatMessage.setMeetingId(currentMeetingId);
         meetingChatMessage.setMessageId(messageId);
         meetingChatMessage.setStatus(MessageStatusEnum.SENDED.getStatus());
         this.baseMapper.updateById(meetingChatMessage);

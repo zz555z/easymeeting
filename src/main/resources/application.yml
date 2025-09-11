@@ -113,7 +113,7 @@ mybatis-plus:
 
 # 管理员邮箱
 admin:
-  emails: test@qq.com
+  emails: test01@qq.com
   folder: ${user.dir}
   wsPort: 6061    # netty端口
   meetingDuration: 30  #默认30分钟

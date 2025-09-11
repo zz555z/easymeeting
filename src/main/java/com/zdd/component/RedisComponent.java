@@ -104,6 +104,6 @@ public class RedisComponent {
     }
 
     public void setSysSetting(SysSettingDto sysSettingDto) {
-        redisUtils.setex(CommonConstant.REDIS_KEY_SYSSETTING_KEY, sysSettingDto, CommonConstant.REDIS_KEY_TIME_ONE_MIN * 5);
+        redisUtils.setex(CommonConstant.REDIS_KEY_SYSSETTING_KEY, sysSettingDto, CommonConstant.REDIS_KEY_TIME_ONE_DAY);
     }
 }
