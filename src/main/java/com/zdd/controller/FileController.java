@@ -55,7 +55,7 @@ public class FileController {
 
         thumnail = thumnail == null ? false : thumnail;
 
-        String folder = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime,fileTypeEnum)+File.separator+messageId+fileTypeEnum.getSuffix();
+        String folder = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime, fileTypeEnum) + File.separator + messageId + fileTypeEnum.getSuffix();
 
         switch (fileTypeEnum) {
             case IMAGE:
@@ -174,12 +174,13 @@ public class FileController {
 
     @RequestMapping("downloadFile")
     @GlobalInterceptor(checkLogin = false)
-    public void downloadFile(HttpServletResponse response, @NotEmpty String token, @NotEmpty String messageId, @NotNull Long sendTime,String fi) throws IOException {
+    public void downloadFile(HttpServletResponse response, @NotEmpty String token, @NotEmpty String messageId, @NotNull Long sendTime, String suffix) throws IOException {
         UserTokenDTO userTokenDTO = redisComponent.getUserTokenDTO(token);
         if (null == userTokenDTO) {
             throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_900);
         }
-        String filePath = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime,FileTypeEnum.IMAGE);
+        FileTypeEnum fileTypeEnum = FileTypeEnum.fromSuffix(suffix);
+        String filePath = CommonUtils.getUploadFilePath(appConfig.getFolder(), sendTime, fileTypeEnum)+File.separator+messageId+suffix;
         File file = new File(filePath);
         response.setContentType("application/x-msdownload; charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment;");
@@ -202,7 +203,7 @@ public class FileController {
         if (null == userTokenDTO) {
             throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_900);
         }
-        String filePath  =appConfig.getFolder()+File.separator + CommonConstant.FIlE + CommonConstant.FIlE_AVATAR;
+        String filePath = appConfig.getFolder() + File.separator + CommonConstant.FIlE + CommonConstant.FIlE_AVATAR;
         String fileName = filePath + userId + CommonConstant.IMAGE_SUFFIX;
         response.setContentType("image/jpg");
         File file = new File(fileName);
@@ -212,7 +213,7 @@ public class FileController {
         readFile(response, null, fileName, false);
     }
 
-    private void readLocalFile(HttpServletResponse response,String filePath) {
+    private void readLocalFile(HttpServletResponse response, String filePath) {
         response.setHeader("Cache-Control", "max-age=" + 30 * 24 * 60 * 60);
         response.setContentType("image/jpg");
         // 读取文件
