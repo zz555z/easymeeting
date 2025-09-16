@@ -132,7 +132,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
     public String preJoinMeeting(String meetingNo, UserTokenDTO userTokenDTO, String joinPassword) {
         // 查询正在进行的会议信息，根据会议编号和会议状态排序
         QueryWrapper<MeetingInfo> queryWrapper = new QueryWrapper<MeetingInfo>().eq("meeting_no", meetingNo)
-                .eq("status", MeetingStatusEnum.RUN.getStatus())
+//                .eq("status", MeetingStatusEnum.RUN.getStatus())
                 .orderByDesc("create_time");
         List<MeetingInfo> meetingInfos = baseMapper.selectList(queryWrapper);
 
@@ -228,7 +228,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
             log.info("会议已无正常成员，准备结束会议：meetingId={}", currenMeetingId);
 
             MeetingInfo meetingInfo = meetingInfoMapper.selectById(currenMeetingId);
-            if (meetingInfo.getEndTime().compareTo(new Date()) <= 0) {
+            if (meetingInfo.getEndTime() != null && meetingInfo.getEndTime().compareTo(new Date()) <= 0) {
                 log.info("会议已超过预约结束时间：meetingId={} endtime={}", currenMeetingId, meetingInfo.getEndTime());
                 finishMeeting(currenMeetingId, null);
             }
@@ -384,8 +384,8 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
 
     }
 
-    @Autowired
-    private AppConfig appConfig;
+    //    @Autowired
+//    private AppConfig appConfig;
     @Override
     public MeetingInfo quickMeeting(Integer meetingNoType, String meetingName, Integer joinType, String joinPassword, UserTokenDTO userTokenDTO) {
 
@@ -403,8 +403,8 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
 
         Date date = new Date();
         meetingInfo.setStartTime(date);
-        meetingInfo.setDuration(appConfig.getMeetingDuration());
-        meetingInfo.setEndTime(CommonUtils.addMinutes(date, appConfig.getMeetingDuration()));
+//        meetingInfo.setDuration(appConfig.getMeetingDuration());
+//        meetingInfo.setEndTime(CommonUtils.addMinutes(date, appConfig.getMeetingDuration()));
         baseMapper.insert(meetingInfo);
         return meetingInfo;
 
@@ -634,7 +634,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
     private void addMeetingMember(UserTokenDTO userTokenDTO, MeetingInfo meetingInfo) {
         MeetingMember meetingMemberdb = meetingMemberMapper.selectOne(new QueryWrapper<MeetingMember>().eq("meeting_id", meetingInfo.getMeetingId())
                 .eq("user_id", userTokenDTO.getUserId()));
-        if (meetingMemberdb == null){
+        if (meetingMemberdb == null) {
             MeetingMember meetingMember = new MeetingMember();
             meetingMember.setMeetingId(meetingInfo.getMeetingId());
             meetingMember.setUserId(userTokenDTO.getUserId());

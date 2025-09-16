@@ -37,35 +37,20 @@ spring:
               standard:
                 sharding-column: meeting_id
                 sharding-algorithm-name: meeting-id-sharding
-            key-generate-strategy:
-              column: message_id
-              key-generator-name: SHORT_ID
+#            key-generate-strategy:
+#              column: message_id
+#              key-generator-name: SHORT_ID
         sharding-algorithms:
           meeting-id-sharding:
             type: CLASS_BASED
             props:
               strategy: STANDARD  # 标准分片策
               algorithmClassName: com.zdd.config.MeetingIdShardingAlgorithm
-        key-generators:
-          SHORT_ID:
-            type: SHORT_ID
+#        key-generators:
+#          SHORT_ID:
+#            type: SHORT_ID
 #            props:
 #              algorithmClassName: com.zdd.config.ShortIdKeyGenerator
-  # 数据库配置
-#  datasource:
-#    url: jdbc:mysql://127.0.0.1:3306/easymetting?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false
-#    username: root
-#    password: mysql
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    hikari:
-#      pool-name: HikariCPDatasource
-#      minimum-idle: 5
-#      idle-timeout: 180000
-#      maximum-pool-size: 10
-#      auto-commit: true
-#      max-lifetime: 1800000
-#      connection-timeout: 30000
-#      connection-test-query: SELECT 1
 
   # Redis 配置
   redis:

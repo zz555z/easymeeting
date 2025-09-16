@@ -24,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/chat")
@@ -39,11 +41,14 @@ public class ChatController {
 
     @PostMapping("/loadMessage")
     @GlobalInterceptor()
-    public ResponseVO<List<MeetingChatMessage>> loadMessage(Long maxMessageId, Integer pageNo) {
+    public ResponseVO<Map<String, Object>> loadMessage(Long maxMessageId, Integer pageNo) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
         List<MeetingChatMessage> messageList = meetingChatMessageService.loadMessage(userTokenDTO, maxMessageId, pageNo);
-        return ResponseVO.success(messageList);
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", messageList);
+//        result.put("pageNo", pageNo);
+        return ResponseVO.success(result);
     }
 
 
