@@ -291,7 +291,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
             throw new BusinessException("当前会议已结束");
         }
 
-        if (StringUtils.isNotEmpty(userId) && meetingInfo.getCreateUserId().equals(userId)) {
+        if (StringUtils.isNotEmpty(userId) && !meetingInfo.getCreateUserId().equals(userId)) {
             log.info("该会议不是自己的会议，无权限解散");
             throw new BusinessException("该会议不是自己的会议，无权限解散");
         }
