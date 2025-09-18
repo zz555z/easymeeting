@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zdd.component.RedisComponent;
-import com.zdd.config.AppConfig;
 import com.zdd.entry.domain.MeetingInfo;
 import com.zdd.entry.domain.MeetingMember;
 import com.zdd.entry.domain.MeetingReserveMember;
@@ -68,7 +67,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
     public Page<MeetingInfo> getAllList(UserTokenDTO userTokenDTO) {
         QueryWrapper<MeetingInfo> queryWrapper = new QueryWrapper<MeetingInfo>()
                 .eq("create_user_id", userTokenDTO.getUserId())
-                .eq("status", MeetingMemberStatusEnum.NORMAL.getStatus())
+                .eq("status", MeetingStatusEnum.OVER.getStatus())
                 .orderByDesc("create_time");
         Page<MeetingInfo> meetingInfoPage = meetingInfoMapper.selectPage(new Page<MeetingInfo>(1, 15), queryWrapper);
 
@@ -348,8 +347,9 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
         meetingInfo.setStatus(MeetingStatusEnum.NO_START.getStatus());
         meetingInfo.setCreateTime(new Date());
         meetingInfo.setCreateUserId(userTokenDTO.getUserId());
+        meetingInfo.setCreateUserName(userTokenDTO.getNickName());
         meetingInfo.setDuration(duration);
-        meetingInfo.setStartTime(CommonUtils.stringToDate(startTime));
+        meetingInfo.setStartTime(CommonUtils.stringToDateYMDHM(startTime));
         meetingInfo.setEndTime(CommonUtils.addMinutes(meetingInfo.getStartTime(), duration));
         baseMapper.insert(meetingInfo);
 
@@ -399,6 +399,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
         meetingInfo.setStatus(MeetingStatusEnum.RUN.getStatus());
         meetingInfo.setCreateTime(new Date());
         meetingInfo.setCreateUserId(userTokenDTO.getUserId());
+        meetingInfo.setCreateUserName(userTokenDTO.getNickName());
         meetingInfo.setMeetingId(CommonUtils.getMeetingId());
 
         Date date = new Date();
@@ -453,12 +454,12 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
         QueryWrapper<MeetingInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge("start_time", CommonUtils.getStartOfDay(date));
         queryWrapper.lt("end_time", CommonUtils.getEndOfDay(date));
-        queryWrapper.eq("status", MeetingStatusEnum.NO_START.getStatus());
+        queryWrapper.in("status", MeetingStatusEnum.RUN.getStatus(), MeetingStatusEnum.NO_START.getStatus());
         queryWrapper.orderByAsc("start_time");
         List<MeetingInfo> meetingInfos = meetingInfoMapper.selectList(queryWrapper);
 
         return meetingInfos.stream().filter(m -> {
-            return !ObjectUtils.isEmpty(meetingReserveMemberService.getMeetingReserveMember(m.getMeetingId(), userId));
+            return !ObjectUtils.isEmpty(meetingReserveMemberService.getMeetingReserveMember(m.getMeetingId(), userId)) || m.getCreateUserId().equals(userId);
         }).collect(Collectors.toList());
     }
 
@@ -491,12 +492,23 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
             log.info("会议不存在");
             throw new BusinessException("会议不存在");
         }
-        // 检查用户是否被邀请参加预约会议
-        MeetingReserveMember meetingReserveMember = meetingReserveMemberService.getMeetingReserveMember(meetingId, userId);
-        if (ObjectUtils.isEmpty(meetingReserveMember)) {
-            log.info("当前用户没有被邀请");
-            throw new BusinessException("当前用户没有被邀请");
+
+        Date preStartTime = CommonUtils.addMinutes(meetingInfo.getStartTime(), -15);
+        if (new Date().before(preStartTime)) {
+            log.info("只可以提前十五分钟入会");
+            throw new BusinessException("只可以提前十五分钟入会");
         }
+        if (meetingInfo.getCreateUserId().equals(userId)) {
+            log.info("当前用户是会议创建者");
+        } else {
+            // 检查用户是否被邀请参加预约会议
+            MeetingReserveMember meetingReserveMember = meetingReserveMemberService.getMeetingReserveMember(meetingId, userId);
+            if (ObjectUtils.isEmpty(meetingReserveMember)) {
+                log.info("当前用户没有被邀请");
+                throw new BusinessException("当前用户没有被邀请");
+            }
+        }
+
         // 如果会议加入类型是密码加入，检查入会密码是否正确
         if (MeetingJoinTypeEnum.PASSWORD.getStatus().equals(meetingInfo.getJoinType()) && !meetingInfo.getJoinPassword().equals(joinPassWord)) {
             log.info("入会密码错误");
@@ -606,6 +618,24 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
 
     @Override
     public void adminFinishMeeting(String meetingId) {
+
+    }
+
+    @Override
+    public void delMeetingRecord(UserTokenDTO userTokenDTO, String meetingId) {
+        MeetingInfo meetingInfodb = meetingInfoMapper.selectById(meetingId);
+        if (meetingInfodb == null) {
+            log.info("会议不存在");
+            throw new BusinessException("会议不存在");
+        }
+        if (!meetingInfodb.getCreateUserId().equals(userTokenDTO.getUserId())) {
+            log.info("该会议没有权限删除");
+            throw new BusinessException("该会议没有权限删除");
+        }
+        QueryWrapper<MeetingInfo> wrapper = new QueryWrapper<MeetingInfo>().eq("meeting_id", meetingId).eq("create_user_id", userTokenDTO.getUserId());
+        MeetingInfo meetingInfo = new MeetingInfo();
+        meetingInfo.setStatus(MeetingStatusEnum.DEL.getStatus());
+        meetingInfoMapper.update(meetingInfo, wrapper);
 
     }
 

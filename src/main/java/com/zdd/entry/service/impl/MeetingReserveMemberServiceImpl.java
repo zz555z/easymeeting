@@ -26,7 +26,11 @@ public class MeetingReserveMemberServiceImpl extends ServiceImpl<MeetingReserveM
 
     @Override
     public MeetingReserveMember getMeetingReserveMember(String meetingId, String userId) {
-        return this.baseMapper.selectOne(new QueryWrapper<MeetingReserveMember>().eq("meeting_id", meetingId).eq("invite_user_id", userId));
+        return this.baseMapper.selectOne(new QueryWrapper<MeetingReserveMember>().eq("meeting_id", meetingId)
+                .eq("invite_user_id", userId));
+//                .or(qw ->
+//                        qw.eq("invite_user_id", userId)
+//                                .eq("create_user_id", userId)));
 
     }
 }

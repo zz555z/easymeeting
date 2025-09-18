@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,7 +63,10 @@ public class MeetingController {
         // 获取用户相关的所有会议信息列表
         Page<MeetingInfo> allList = meetingInfoService.getAllList(userTokenDTO);
         // 返回成功响应，包含会议信息列表
-        return ResponseVO.success(allList);
+        List<MeetingInfo> records = allList.getRecords();
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", records);
+        return ResponseVO.success(result);
     }
 
     /**
@@ -92,7 +93,7 @@ public class MeetingController {
 
 
         // 保存会议信息到数据库
-        MeetingInfo meetingInfo =  meetingInfoService.quickMeeting(meetingNoType,meetingName,joinType,joinPassword,userTokenDTO);
+        MeetingInfo meetingInfo = meetingInfoService.quickMeeting(meetingNoType, meetingName, joinType, joinPassword, userTokenDTO);
 
         // 更新用户令牌信息，关联当前会议
         userTokenDTO.setCurrentMeetingId(meetingInfo.getMeetingId());
@@ -251,7 +252,7 @@ public class MeetingController {
 
     @PostMapping("/reserveJoinMeeting")
     @GlobalInterceptor()
-    public ResponseVO reserveJoinMeeting(@NotEmpty String meetingId,@NotEmpty String joinPassWord) {
+    public ResponseVO reserveJoinMeeting(@NotEmpty String meetingId, String joinPassWord) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
         meetingInfoService.reserveJoinMeeting(meetingId, userTokenDTO, joinPassWord);
@@ -280,10 +281,20 @@ public class MeetingController {
 
     @PostMapping("/sendOpenVideoChangeMessage")
     @GlobalInterceptor()
-    public ResponseVO sendVideoChangeMessage(@NotNull  Boolean  openVideo) {
+    public ResponseVO sendVideoChangeMessage(@NotNull Boolean openVideo) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
-        meetingInfoService.updateMemberOpenVideo(userTokenDTO.getCurrentMeetingId(),userTokenDTO.getUserId(),openVideo);
+        meetingInfoService.updateMemberOpenVideo(userTokenDTO.getCurrentMeetingId(), userTokenDTO.getUserId(), openVideo);
         return ResponseVO.success();
     }
+
+    @PostMapping("/delMeetingRecord")
+    @GlobalInterceptor()
+    public ResponseVO delMeetingRecord(@NotNull String meetingId) {
+        // 获取用户令牌信息，用于识别和验证用户身份
+        UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
+        meetingInfoService.delMeetingRecord(userTokenDTO, meetingId);
+        return ResponseVO.success();
+    }
+//
 }

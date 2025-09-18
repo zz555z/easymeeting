@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zdd.entry.dto.UserTokenDTO;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -56,4 +57,6 @@ public interface MeetingInfoService extends IService<MeetingInfo> {
     List<MeetingInfo> loadMeetingList(String meetingName, Page<MeetingInfo> userInfoIPage);
 
     void adminFinishMeeting(String meetingId);
+
+    void delMeetingRecord(UserTokenDTO userTokenDTO, @NotNull String meetingId);
 }

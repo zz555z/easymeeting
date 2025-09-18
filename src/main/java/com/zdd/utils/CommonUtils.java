@@ -17,6 +17,8 @@ public class CommonUtils {
 
     private static final String DEFAULT_DATE_TIME_FORMAT_YYYYMMDD = "yyyyMMdd";
 
+    private static final String DEFAULT_DATE_YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
+
 
     public static String getMeetingId() {
         return RandomUtils.generateRandomNumber(CommonConstant.RODMIX_NUMBER).toString();
@@ -36,6 +38,25 @@ public class CommonUtils {
      */
     public static Date stringToDate(String dateTimeStr) {
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
+        try {
+            return sdf.parse(dateTimeStr);
+        } catch (ParseException e) {
+            log.error("字符串转换日期错误");
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    /**
+     * 将yyyy-MM-dd HH:mm:ss格式的字符串转换为Date类型
+     *
+     * @param dateTimeStr 日期时间字符串
+     * @return 转换后的Date对象
+     * @throws ParseException 如果字符串格式不正确
+     */
+    public static Date stringToDateYMDHM(String dateTimeStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_YYYY_MM_DD_HH_MM);
         try {
             return sdf.parse(dateTimeStr);
         } catch (ParseException e) {
@@ -122,6 +143,8 @@ public class CommonUtils {
     }
 
 
+
+
     /**
      * 将Date对象格式化为yyyy-MM-dd HH:mm:ss字符串
      *
@@ -144,13 +167,6 @@ public class CommonUtils {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
-
-    public static void main(String[] args) {
-        String ss = DigestUtil.md5Hex("Abc123456" + CommonConstant.MD5_SALTING);
-        System.out.println(ss);
-
-
-    }
 
     public static String getImageThumbnailSuffix(String filePath) {
         return filePath + CommonConstant.IMAGETHUMBNAIL + CommonConstant.IMAGE_SUFFIX;

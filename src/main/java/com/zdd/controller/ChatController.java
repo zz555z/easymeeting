@@ -4,15 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zdd.aop.annotation.GlobalInterceptor;
 import com.zdd.config.TokenInterceptor;
 import com.zdd.entry.domain.MeetingChatMessage;
+import com.zdd.entry.domain.MeetingInfo;
 import com.zdd.entry.domain.MeetingMember;
 import com.zdd.entry.dto.UserTokenDTO;
 import com.zdd.entry.eum.ReceiveTypeEnum;
 import com.zdd.entry.eum.ResponseCodeEnum;
 import com.zdd.entry.service.MeetingChatMessageService;
+import com.zdd.entry.service.MeetingInfoService;
 import com.zdd.entry.service.MeetingMemberService;
 import com.zdd.entry.vo.ResponseVO;
 import com.zdd.exception.BusinessException;
 import com.zdd.utils.CommonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
@@ -37,6 +41,9 @@ public class ChatController {
 
     @Autowired
     private MeetingMemberService meetingMemberService;
+
+    @Autowired
+    private MeetingInfoService meetingInfoService;
 
 
     @PostMapping("/loadMessage")
@@ -77,7 +84,7 @@ public class ChatController {
         }
         meetingChatMessage.setReceiveUserId(receiveUserId);
 
-        meetingChatMessage =   meetingChatMessageService.saveChatMessage(meetingChatMessage);
+        meetingChatMessage = meetingChatMessageService.saveChatMessage(meetingChatMessage);
 
         return ResponseVO.success(meetingChatMessage);
     }
@@ -95,14 +102,27 @@ public class ChatController {
 
     @PostMapping("/loadHistoryMessage")
     @GlobalInterceptor()
-    public ResponseVO<List<MeetingChatMessage>> loadHistoryMessage(@NotEmpty String meetingId,Long maxMessageId, Integer pageNo) {
+    public ResponseVO<Map<String, Object>> loadHistoryMessage(@NotEmpty String meetingId, Long maxMessageId, Integer pageNo) {
         // 获取用户令牌信息，用于识别和验证用户身份
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
-        if (checkMeetingMember(meetingId, userTokenDTO.getUserId())) {
-            throw new BusinessException(ResponseCodeEnum.RESPONSE_CODE_900);
+
+        MeetingInfo meetingInfo = meetingInfoService.getById(meetingId);
+        if (meetingInfo == null) {
+            log.info("会议不存在");
+            throw new BusinessException("会议不存在");
         }
-        List<MeetingChatMessage> messageList = meetingChatMessageService.loadHistoryMessage(meetingId,maxMessageId,pageNo);
-        return ResponseVO.success(messageList);
+
+        if (!meetingInfo.getCreateUserId().equals(userTokenDTO.getUserId())) {
+            if (checkMeetingMember(meetingId, userTokenDTO.getUserId())) {
+                throw new BusinessException("当前用户不属于该会议");
+            }
+        }
+
+        List<MeetingChatMessage> messageList = meetingChatMessageService.loadHistoryMessage(meetingId, maxMessageId, pageNo);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", messageList);
+        return ResponseVO.success(result);
     }
 
 
