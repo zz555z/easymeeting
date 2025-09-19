@@ -17,7 +17,7 @@ import java.util.List;
 public interface MeetingInfoService extends IService<MeetingInfo> {
 
 
-    Page<MeetingInfo> getAllList(UserTokenDTO userTokenDTO);
+    List<MeetingInfo> getAllList(UserTokenDTO userTokenDTO, Integer pageNo, Integer meetingStatus);
 
     void joinMeeting(UserTokenDTO userTokenDTO, Boolean videoOpen);
 

@@ -57,15 +57,14 @@ public class MeetingController {
      */
     @PostMapping("/loadMeeting")
     @GlobalInterceptor()
-    public ResponseVO loadMeeting() {
+    public ResponseVO loadMeeting(@NotNull Integer pageNo , @NotNull Integer meetingStatus) {
         // 获取当前用户令牌信息
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
         // 获取用户相关的所有会议信息列表
-        Page<MeetingInfo> allList = meetingInfoService.getAllList(userTokenDTO);
+        List<MeetingInfo> allList = meetingInfoService.getAllList(userTokenDTO,pageNo,meetingStatus);
         // 返回成功响应，包含会议信息列表
-        List<MeetingInfo> records = allList.getRecords();
         Map<String, Object> result = new HashMap<>();
-        result.put("list", records);
+        result.put("list", allList);
         return ResponseVO.success(result);
     }
 

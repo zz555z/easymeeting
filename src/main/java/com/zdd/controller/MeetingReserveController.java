@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Validated
@@ -32,7 +34,9 @@ public class MeetingReserveController {
     public ResponseVO loadMeetingReserve() {
         UserTokenDTO userTokenDTO = TokenInterceptor.getUserTokenDTO();
         List<MeetingInfo> meetingInfos = meetingInfoService.loadMeetingReserve(userTokenDTO.getUserId());
-        return ResponseVO.success(meetingInfos);
+        Map<String,Object> result =  new HashMap<String,Object>();
+        result.put("list",meetingInfos);
+        return ResponseVO.success(result);
     }
 
 

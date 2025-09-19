@@ -69,4 +69,6 @@ public class CommonConstant {
 
 
     public static final String DEFAULT_AVATAR = "user.png";
+
+    public static final int  PAGE_SIZE = 20;
 }

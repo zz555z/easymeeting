@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zdd.component.RedisComponent;
+import com.zdd.entry.constants.CommonConstant;
 import com.zdd.entry.domain.MeetingInfo;
 import com.zdd.entry.domain.MeetingMember;
 import com.zdd.entry.domain.MeetingReserveMember;
@@ -22,6 +23,7 @@ import com.zdd.utils.CommonUtils;
 import com.zdd.websocket.message.MessageHandler;
 import com.zdd.websocket.netty.ChannelContext;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,19 +65,54 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
     private UserContactMapper userContactMapper;
 
 
+    /**
+     * 查询被邀请的会议记录  和  自己创建的会议记录
+     *
+     * @param userTokenDTO
+     * @param pageNo
+     * @param meetingStatus
+     * @return
+     */
     @Override
-    public Page<MeetingInfo> getAllList(UserTokenDTO userTokenDTO) {
+    public List<MeetingInfo> getAllList(UserTokenDTO userTokenDTO, Integer pageNo, Integer meetingStatus) {
+        Page<MeetingReserveMember> meetingReserveMemberPage = new Page<>(pageNo == null ? 1 : pageNo, CommonConstant.PAGE_SIZE);
+
+        Page<MeetingReserveMember> meetingReserveMembers = meetingReserveMemberService.page(meetingReserveMemberPage
+                , new QueryWrapper<MeetingReserveMember>().eq("invite_user_id", userTokenDTO.getUserId()));
+
+
+        Page<MeetingInfo> meetingInfoPage = new Page<>(pageNo == null ? 1 : pageNo, CommonConstant.PAGE_SIZE);
         QueryWrapper<MeetingInfo> queryWrapper = new QueryWrapper<MeetingInfo>()
                 .eq("create_user_id", userTokenDTO.getUserId())
-                .eq("status", MeetingStatusEnum.OVER.getStatus())
-                .orderByDesc("create_time");
-        Page<MeetingInfo> meetingInfoPage = meetingInfoMapper.selectPage(new Page<MeetingInfo>(1, 15), queryWrapper);
+                .eq("status", meetingStatus)
+                .orderByDesc("start_time");
 
-        meetingInfoPage.getRecords().forEach(meetingInfo -> {
+        Page<MeetingInfo> meetingInfos = meetingInfoMapper.selectPage(meetingInfoPage, queryWrapper);
+
+        meetingReserveMembers.getRecords().forEach(meetingReserveMember -> {
+            MeetingInfo meetingInfo = meetingInfoMapper.selectById(meetingReserveMember.getMeetingId());
+            if (meetingInfo.getStatus().equals(meetingStatus)) {
+                meetingInfos.getRecords().add(meetingInfo);
+            }
+        });
+
+        List<MeetingInfo> meetingInfoList = new ArrayList<>();
+        Date nowTime = new Date();
+
+        switch (meetingStatus) {
+            case 1:
+                meetingInfoList = meetingInfos.getRecords().stream().filter(meetingInfo ->meetingInfo.getStartTime().before(nowTime)).collect(Collectors.toList());
+                break;
+
+            case 2:
+                meetingInfoList = meetingInfos.getRecords().stream().filter(meetingInfo ->  nowTime.before(meetingInfo.getStartTime())).collect(Collectors.toList());
+                break;
+        }
+        meetingInfoList.forEach(meetingInfo -> {
             meetingInfo.setMemberCount(meetingMemberMapper.selectCount(new QueryWrapper<MeetingMember>().eq("meeting_id", meetingInfo.getMeetingId())));
         });
 
-        return meetingInfoPage;
+        return meetingInfoList;
 
     }
 
@@ -330,6 +367,7 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
         meetingReserveMembers.forEach(m -> {
             meetingInfos.add(baseMapper.selectById(m.getMeetingId()));
         });
+
 
         return meetingInfos;
     }
