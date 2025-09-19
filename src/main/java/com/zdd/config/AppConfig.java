@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "admin")
 @Data// 绑定 app.* 的配置
 public class AppConfig {
-    private String email;
+    private String emails;
     private int wsPort;
     private String folder;
     private Integer meetingDuration;

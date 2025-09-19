@@ -113,7 +113,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         this.updateById(dbUserInfo);
 
         UserTokenDTO userTokenDTO = CopyTools.copy(dbUserInfo, UserTokenDTO.class);
-        userTokenDTO.setAdmin(email.equals(appConfig.getEmail()));
+        userTokenDTO.setAdmin(email.equals(appConfig.getEmails()));
 
         log.info("用户登录成功：{} ", userTokenDTO);
 
@@ -213,7 +213,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
         messageSendDto.setReceiveUserId(userId);
         messageHandler.sendMessage(messageSendDto);
 
-        redisComponent.deleteUserTokenDTO(redisComponent.getUserTokenDTO(userId));
+        if (redisComponent.getUserTokenDTO(userId)!=null){
+            redisComponent.deleteUserTokenDTO(redisComponent.getUserTokenDTO(userId));
+        }
 
     }
 

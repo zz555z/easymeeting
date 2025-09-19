@@ -233,6 +233,8 @@ public class ChannelContext {
         Channel channel = USER_CHANNEL_MAP.get(messageSendDto.getReceiveUserId());
         // 检查通道是否为空，为空则不执行发送操作
         if (channel == null) {
+            log.info("用户：{} 不在线", messageSendDto.getReceiveUserId());
+
             return;
         }
         String jsonString = JSON.toJSONString(messageSendDto);

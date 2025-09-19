@@ -666,14 +666,23 @@ public class MeetingInfoServiceImpl extends ServiceImpl<MeetingInfoMapper, Meeti
             log.info("会议不存在");
             throw new BusinessException("会议不存在");
         }
-        if (!meetingInfodb.getCreateUserId().equals(userTokenDTO.getUserId())) {
-            log.info("该会议没有权限删除");
-            throw new BusinessException("该会议没有权限删除");
+        //如果是创建人，修改会议状态为删除，并删除所有的邀请信息
+        if (meetingInfodb.getCreateUserId().equals(userTokenDTO.getUserId())) {
+            QueryWrapper<MeetingInfo> wrapper = new QueryWrapper<MeetingInfo>().eq("meeting_id", meetingId).eq("create_user_id", userTokenDTO.getUserId());
+            MeetingInfo meetingInfo = new MeetingInfo();
+            meetingInfo.setStatus(MeetingStatusEnum.DEL.getStatus());
+            meetingInfoMapper.update(meetingInfo, wrapper);
+            //删除所有的邀请人员
+            meetingReserveMemberService.remove(new QueryWrapper<MeetingReserveMember>().eq("meeting_id", meetingId));
+        }else {
+            // 不是创建人，则删除当前用户邀请信息
+            meetingReserveMemberService.remove(new QueryWrapper<MeetingReserveMember>().eq("meeting_id", meetingId).eq("invite_user_id", userTokenDTO.getUserId()));
+
         }
-        QueryWrapper<MeetingInfo> wrapper = new QueryWrapper<MeetingInfo>().eq("meeting_id", meetingId).eq("create_user_id", userTokenDTO.getUserId());
-        MeetingInfo meetingInfo = new MeetingInfo();
-        meetingInfo.setStatus(MeetingStatusEnum.DEL.getStatus());
-        meetingInfoMapper.update(meetingInfo, wrapper);
+
+
+
+
 
     }
 

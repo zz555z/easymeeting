@@ -33,7 +33,9 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -52,10 +54,12 @@ public class AdminController {
 
     @PostMapping("/loadUserList")
     @GlobalInterceptor(checkAdmin = true)
-    public ResponseVO loadUserList(String nickName, Integer pageNum, Integer pageSize) {
-        Page<UserInfo> userInfoIPage = new Page<UserInfo>(pageNum, pageSize);
+    public ResponseVO loadUserList(String nickName, Integer pageNo, Integer pageSize) {
+        Page<UserInfo> userInfoIPage = new Page<UserInfo>(pageNo, pageSize);
         List<UserInfo> userInfos = userInfoService.loadUserList(nickName, userInfoIPage);
-        return ResponseVO.success(userInfos);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", userInfos);
+        return ResponseVO.success(map);
     }
 
 
