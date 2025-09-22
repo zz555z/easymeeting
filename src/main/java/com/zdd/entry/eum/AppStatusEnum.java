@@ -5,7 +5,7 @@ public enum AppStatusEnum {
 
     INIT(0, "未发布"),
     GRAYSCALE(1, "灰度发布"),
-    ALL(1, "全网发布");
+    ALL(2, "全网发布");
 
     private int code;
     private String desc;

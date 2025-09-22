@@ -105,9 +105,11 @@ public class AdminController {
     @PostMapping("/loadMeetingList")
     @GlobalInterceptor(checkAdmin = true)
     public ResponseVO loadMeetingList(String meetingName, Integer pageNum, Integer pageSize) {
-        Page<MeetingInfo> userInfoIPage = new Page<MeetingInfo>(pageNum, pageSize);
+        Page<MeetingInfo> userInfoIPage = new Page<MeetingInfo>(pageNum == null ? 1 : pageNum, pageSize == null ? CommonConstant.PAGE_SIZE : pageSize);
         List<MeetingInfo> meetingInfos = meetingInfoService.loadMeetingList(meetingName, userInfoIPage);
-        return ResponseVO.success(meetingInfos);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", meetingInfos);
+        return ResponseVO.success(map);
     }
 
     @PostMapping("/adminFinishMeeting")
@@ -120,13 +122,16 @@ public class AdminController {
 
     @PostMapping("/loadUpLoadList")
     @GlobalInterceptor(checkAdmin = true)
-    public ResponseVO loadUpLoadList(@RequestBody AppUpdateDto appUpdateDto) {
+    public ResponseVO loadUpLoadList(String createTimeStart,String createTimeEnd, Integer pageNum, Integer pageSize) {
+        Page<AppUpdate> appUpdatePage = new Page<AppUpdate>(pageNum, pageSize);
 
         // 通过分页查询获取应用更新列表
-        List<AppUpdate> appUpdates = appUpdateService.findByPage(appUpdateDto);
+        List<AppUpdate> appUpdates = appUpdateService.findByPage(appUpdatePage, createTimeStart, createTimeEnd);
         // 将查询结果转换为视图对象列表并返回成功响应
         // 返回用户信息
-        return ResponseVO.success(appUpdates);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", appUpdates);
+        return ResponseVO.success(map);
     }
 
     /**
@@ -224,7 +229,6 @@ public class AdminController {
             log.error("读取文件异常", e);
         }
     }
-
 
 
 }

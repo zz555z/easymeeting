@@ -19,6 +19,9 @@ public class CommonUtils {
 
     private static final String DEFAULT_DATE_YYYY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm";
 
+    private static final String DEFAULT_DATE_TIME_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
+
+
 
     public static String getMeetingId() {
         return RandomUtils.generateRandomNumber(CommonConstant.RODMIX_NUMBER).toString();
@@ -38,6 +41,25 @@ public class CommonUtils {
      */
     public static Date stringToDate(String dateTimeStr) {
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
+        try {
+            return sdf.parse(dateTimeStr);
+        } catch (ParseException e) {
+            log.error("字符串转换日期错误");
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    /**
+     * 将yyyy-MM-dd HH:mm:ss格式的字符串转换为Date类型
+     *
+     * @param dateTimeStr 日期时间字符串
+     * @return 转换后的Date对象
+     * @throws ParseException 如果字符串格式不正确
+     */
+    public static Date stringToDateYYYY_MM_DD(String dateTimeStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT_YYYY_MM_DD);
         try {
             return sdf.parse(dateTimeStr);
         } catch (ParseException e) {

@@ -1,11 +1,14 @@
 package com.zdd.entry.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -42,7 +45,9 @@ public class AppUpdate implements Serializable {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    @JsonFormat(pattern = "yyyy-mm-dd hh:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-mm-dd hh:mm:ss")
+    private Date createTime;
 
     /**
      * 0:未发布 1:灰度发布 2:全网发布

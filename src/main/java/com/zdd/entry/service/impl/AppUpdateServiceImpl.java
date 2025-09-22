@@ -8,6 +8,7 @@ import com.zdd.config.AppConfig;
 
 import com.zdd.entry.constants.CommonConstant;
 import com.zdd.entry.domain.AppUpdate;
+import com.zdd.entry.domain.UserInfo;
 import com.zdd.entry.dto.AppUpdateDto;
 import com.zdd.entry.eum.AppStatusEnum;
 import com.zdd.entry.eum.LinkTypeEnum;
@@ -15,6 +16,7 @@ import com.zdd.entry.mapper.AppUpdateMapper;
 import com.zdd.entry.service.AppUpdateService;
 import com.zdd.exception.BusinessException;
 
+import com.zdd.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -128,7 +132,7 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
             po.setVersion(version);
             po.setUpdateDesc(updateDesc);
             po.setStatus(AppStatusEnum.INIT.getCode());
-            po.setCreateTime(LocalDateTime.now());
+            po.setCreateTime(new Date());
             po.setOuterLink(outerLink);
             baseMapper.insert(po);
         }
@@ -209,6 +213,17 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
 
         // 不满足更新条件，则返回null
         return null;
+    }
+
+    @Override
+    public List<AppUpdate> findByPage(Page<AppUpdate> appUpdatePage, String createTimeStart, String createTimeEnd) {
+        QueryWrapper<AppUpdate> wrapper = new QueryWrapper<AppUpdate>();
+        if (StringUtils.isNotEmpty(createTimeStart)&& StringUtils.isNotEmpty(createTimeEnd)){
+            wrapper.between("create_time", CommonUtils.stringToDateYYYY_MM_DD(createTimeStart), CommonUtils.stringToDateYYYY_MM_DD(createTimeEnd));
+        }
+        return this.baseMapper.selectList(appUpdatePage,wrapper);
+
+
     }
 
     /**

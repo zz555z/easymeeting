@@ -1,8 +1,10 @@
 package com.zdd.entry.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.zdd.entry.domain.AppUpdate;
+import com.zdd.entry.domain.UserInfo;
 import com.zdd.entry.dto.AppUpdateDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,4 +28,7 @@ public interface AppUpdateService extends IService<AppUpdate> {
     void grayscaleStatus(Integer id, Integer status, String grayscaleUid);
 
     AppUpdate checkVersion(String appVsersion, String uid);
+
+    List<AppUpdate> findByPage(Page<AppUpdate> appUpdatePage, String createTimeStart, String createTimeEnd);
+
 }
