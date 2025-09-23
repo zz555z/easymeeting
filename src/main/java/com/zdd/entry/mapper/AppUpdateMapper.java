@@ -2,6 +2,7 @@ package com.zdd.entry.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zdd.entry.domain.AppUpdate;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 /**
@@ -14,6 +15,10 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface AppUpdateMapper extends BaseMapper<AppUpdate> {
 
-    @Select("select * from app_update order by version desc limit 1")
-    AppUpdate findOrderByCreateTime();
+    @Select("select * from app_update where status = #{staus} order by version desc limit 1")
+    AppUpdate findOrderByCreateTime(@Param("staus") int status);
+
+
+    @Select("select *  from app_update  order by version desc limit 1")
+    AppUpdate findMacVersion();
 }

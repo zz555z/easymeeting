@@ -96,7 +96,7 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
     @Transactional
     public void saveOrUpdateMethd(Integer id, String version, String updateDesc, String outerLink, MultipartFile multipartFile) throws Exception {
         // 检查数据库中是否存在版本记录，如果存在，则确保提供的版本号大于任何已存在的版本号
-        AppUpdate appUpdate = appUpdateMapper.findOrderByCreateTime();
+        AppUpdate appUpdate = appUpdateMapper.findMacVersion();
         if (ObjectUtil.isNotEmpty(appUpdate)) {
             String dbversion = appUpdate.getVersion().replaceAll("\\.", "");
             String newversion = version.replaceAll("\\.", "");
@@ -192,23 +192,25 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
     @Override
     public AppUpdate checkVersion(String appVsersion, String uid) {
         // 从数据库中获取最新的应用更新记录
-        AppUpdate db = appUpdateMapper.findOrderByCreateTime();
+        AppUpdate graAppUpdate = appUpdateMapper.findOrderByCreateTime(AppStatusEnum.GRAYSCALE.getCode());
 
-        // 将数据库中的版本号去点后转换为Long类型，以便比较
-        Long dbversion = Long.parseLong(db.getVersion().replaceAll("\\.", ""));
-        // 将客户端的版本号去点后转换为Long类型，以便比较
+        AppUpdate allAppUpdate = appUpdateMapper.findOrderByCreateTime(AppStatusEnum.ALL.getCode());
+
         Long appversion = Long.parseLong(appVsersion.replaceAll("\\.", ""));
+        Long allVerrsion = Long.parseLong(allAppUpdate.getVersion().replaceAll("\\.", ""));
 
-        // 判断当前版本是否为灰度发布状态，且数据库版本号大于客户端版本号，同时用户ID匹配灰度发布的用户ID
-        if (AppStatusEnum.GRAYSCALE.getCode() == db.getStatus() && dbversion > appversion && db.getGrayscaleUid().contains(uid)) {
-            // 满足条件，则返回数据库中的更新信息
-            return db;
-        }
 
-        // 判断当前版本是否为全部用户发布状态，且数据库版本号大于客户端版本号
-        if (AppStatusEnum.ALL.getCode() == db.getStatus() && dbversion > appversion) {
-            // 满足条件，则返回数据库中的更新信息
-            return db;
+        if (ObjectUtil.isNotEmpty(graAppUpdate) && graAppUpdate.getGrayscaleUid().contains(uid)) {
+            Long graVerrsion = Long.parseLong(graAppUpdate.getVersion().replaceAll("\\.", ""));
+            if (graVerrsion > allVerrsion && graVerrsion > appversion) {
+                log.info("当前版本为灰度发布，返回灰度发布信息");
+                return graAppUpdate;
+            }
+        } else {
+            if (allVerrsion > appversion) {
+                log.info("当前版本为全部用户发布，返回全部用户发布信息");
+                return allAppUpdate;
+            }
         }
 
         // 不满足更新条件，则返回null
@@ -218,10 +220,10 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
     @Override
     public List<AppUpdate> findByPage(Page<AppUpdate> appUpdatePage, String createTimeStart, String createTimeEnd) {
         QueryWrapper<AppUpdate> wrapper = new QueryWrapper<AppUpdate>();
-        if (StringUtils.isNotEmpty(createTimeStart)&& StringUtils.isNotEmpty(createTimeEnd)){
+        if (StringUtils.isNotEmpty(createTimeStart) && StringUtils.isNotEmpty(createTimeEnd)) {
             wrapper.between("create_time", CommonUtils.stringToDateYYYY_MM_DD(createTimeStart), CommonUtils.stringToDateYYYY_MM_DD(createTimeEnd));
         }
-        return this.baseMapper.selectList(appUpdatePage,wrapper);
+        return this.baseMapper.selectList(appUpdatePage, wrapper);
 
 
     }

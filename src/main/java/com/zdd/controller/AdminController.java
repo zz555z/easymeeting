@@ -194,13 +194,13 @@ public class AdminController {
 
     @PostMapping("/checkVersion")
     @GlobalInterceptor(checkAdmin = true)
-    public ResponseVO<AppUpdate> checkVersion(String appVsersion, String uid) {
+    public ResponseVO<AppUpdate> checkVersion(String appVersion, String uid) {
         // 检查版本号或用户ID是否为空，如果任一为空，则直接返回成功响应，不进行版本检查
-        if (StringUtils.isEmpty(appVsersion) || StringUtils.isEmpty(uid)) {
+        if (StringUtils.isEmpty(appVersion) || StringUtils.isEmpty(uid)) {
             return ResponseVO.success();
         }
         // 调用服务层方法检查版本，并获取更新信息
-        AppUpdate appUpdate = appUpdateService.checkVersion(appVsersion, uid);
+        AppUpdate appUpdate = appUpdateService.checkVersion(appVersion, uid);
         // 将更新信息转换为视图对象，并封装到响应对象中返回
         return ResponseVO.success(appUpdate);
     }
