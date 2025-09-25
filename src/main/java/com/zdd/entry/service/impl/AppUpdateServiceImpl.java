@@ -196,6 +196,9 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
 
         AppUpdate allAppUpdate = appUpdateMapper.findOrderByCreateTime(AppStatusEnum.ALL.getCode());
 
+        if (allAppUpdate == null) {
+            return null;
+        }
         Long appversion = Long.parseLong(appVsersion.replaceAll("\\.", ""));
         Long allVerrsion = Long.parseLong(allAppUpdate.getVersion().replaceAll("\\.", ""));
 
@@ -206,11 +209,10 @@ public class AppUpdateServiceImpl extends ServiceImpl<AppUpdateMapper, AppUpdate
                 log.info("当前版本为灰度发布，返回灰度发布信息");
                 return graAppUpdate;
             }
-        } else {
-            if (allVerrsion > appversion) {
-                log.info("当前版本为全部用户发布，返回全部用户发布信息");
-                return allAppUpdate;
-            }
+        }
+        if (allVerrsion > appversion) {
+            log.info("当前版本为全部用户发布，返回全部用户发布信息");
+            return allAppUpdate;
         }
 
         // 不满足更新条件，则返回null
